@@ -28,30 +28,35 @@
     <div class="container">
         <div class="row">
             <div class="col-md-3 sidebar">
-                    <form id="search-city-form">
-                        <div class="form-group">
-                            <label for="search-city-input">Enter City:</label>
-                            <input type="text" class="form-control" id="search-city-input"
-                                placeholder="Enter city name">
-                        </div>
-                        <button type="submit" class="btn btn-primary btn-block">Search</button>
-                    </form>
+                <form id="search-city-form">
+                    <div class="form-group">
+                        <label for="search-city-input">Enter City:</label>
+                        <input type="text" class="form-control" id="search-city-input" placeholder="Enter city name">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Search</button>
+                </form>
+            </div>
+            <div class="col-md-3 sidebar">
+                <h4>Recent Searches</h4>
+                <ul class="list-group" id="recent-searches">
+                    <!-- Recent searches will be populated here -->
+                </ul>
             </div>
         </div>
-        <!-- error line-->
-        <h1 class="mt-5 mb-4 text-center" id="error-text"></h1>
+    </div>
+    <!-- error line-->
+    <h1 class="mt-5 mb-4 text-center" id="error-text"></h1>
 
-        <h1 class="mt-6 mb-5 text-center" id="curent-weather-text">Current Weather</h1>
-        <div id="current-weather" class="row current-row-center">
-
-        </div>
-    
-        <h2 class="mt-6 mb-5 text-center" id="five-day-weather-text">5-Day Forecast</h2>
-        <div id="five-day-forecast" class="row">
-
-        </div>        
+    <h1 class="mt-5 mb-4 text-center" id="curent-weather-text">Current Weather</h1>
+    <div id="current-weather" class="row current-row-center">
+        <!--current weather card -->
     </div>
 
+    <h2 class="mt-5 mb-4 text-center" id="five-day-weather-text">5-Day Forecast</h2>
+    <div id="five-day-forecast" class="row">
+        <!-- 5 day forecast cards-->
+    </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"

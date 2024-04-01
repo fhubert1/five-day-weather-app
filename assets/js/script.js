@@ -1,3 +1,4 @@
+// Elements
 let searchCityFormEl = $('#search-city-form');
 let cityInputEl = $('#search-city-input');
 let currentWeatherEl = $('#current-weather');
@@ -5,6 +6,8 @@ let forecastWeatherEl = $('#five-day-forecast');
 let curentWeatherText = $('#curent-weather-text');
 let fiveDayForecastText = $('#five-day-weather-text');
 let errorText = $('#error-text');
+let recentSearchList = $('#recent-searches');
+
 
 // API Key
 let myAPIKey = "cd21ba523fb739621b273673758c1457";
@@ -21,11 +24,16 @@ $(window).on('load', function () {
   curentWeatherText.hide();
   fiveDayForecastText.hide();
   errorText.hide();
-//    currentLocation();
-//    checkLocalStorage();
+
+  // Display of recent searches
+  displayRecentSearches();  
+
+  
 });
 
 // Functions
+
+// fetch Weather and Forecast using OWM APIs
 function fetchWeather(city) {
 
     let weatherAPIUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${myAPIKey}&units=imperial`;
@@ -56,6 +64,7 @@ function fetchWeather(city) {
       });      
   }
 
+  // display current weather
   function displayWeather(results) {
 
     if (results.cod === '404') {
@@ -161,6 +170,54 @@ function displayForecast(data) {
 
 }
 
+// save city to local storage
+function saveToLocalStorage(city) {
+
+    let lastestSearches = JSON.parse(localStorage.getItem('recentSearches'));
+
+    if (!lastestSearches) {
+      lastestSearches = [];
+      // add item
+      lastestSearches.push(city);
+      localStorage.setItem('recentSearches', JSON.stringify(lastestSearches));
+    } else if (!lastestSearches.includes(city)) {
+      // check if city exists and add or do not nothing
+      lastestSearches.unshift(city);
+
+      if (lastestSearches.length > 5) {
+        lastestSearches.pop();
+      }
+      localStorage.setItem('recentSearches', JSON.stringify(lastestSearches));
+
+    }
+
+}
+
+// display recent searches pulled from local storage
+function displayRecentSearches() {
+
+  let lastestSearches = JSON.parse(localStorage.getItem('recentSearches'));
+
+  if (lastestSearches) {
+    recentSearchList.empty();
+
+    lastestSearches.forEach(function(search) {
+      recentSearchList.append(`<button id='recent-city-searched'>${search}</button>`);
+    });
+  }
+
+// event handler for recent city searches
+  let recentSearchButtons = document.querySelectorAll("#recent-city-searched");
+  recentSearchButtons.forEach(button => {
+    button.addEventListener("click", () => {
+        let city = button.textContent;
+        fetchWeather(city); // Call getCityWeather with the city name
+    });
+  });  
+
+
+}
+
 // submit event handler for search button
 searchCityFormEl.on("submit", function (event) {
     // Preventing the button from trying to submit the form
@@ -173,6 +230,8 @@ searchCityFormEl.on("submit", function (event) {
         return 
     }
     fetchWeather(q);
-//    saveToLocalStorage(q);
+    saveToLocalStorage(q);
+    displayRecentSearches();
 });
+
 
