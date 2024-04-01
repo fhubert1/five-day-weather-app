@@ -1,6 +1,10 @@
 let searchCityFormEl = $('#search-city-form');
 let cityInputEl = $('#search-city-input');
 let currentWeatherEl = $('#current-weather');
+let forecastWeatherEl = $('#five-day-forecast');
+let curentWeatherText = $('#curent-weather-text');
+let fiveDayForecastText = $('#five-day-weather-text');
+let errorText = $('#error-text');
 
 // API Key
 let myAPIKey = "cd21ba523fb739621b273673758c1457";
@@ -13,6 +17,10 @@ $("#curDayTime").text(curDateTime);
 
 // load window 
 $(window).on('load', function () {
+
+  curentWeatherText.hide();
+  fiveDayForecastText.hide();
+  errorText.hide();
 //    currentLocation();
 //    checkLocalStorage();
 });
@@ -21,87 +29,150 @@ $(window).on('load', function () {
 function fetchWeather(city) {
 
     let weatherAPIUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${myAPIKey}&units=imperial`;
+    const forecastAPIUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${myAPIKey}&units=imperial`;
 
     fetch(weatherAPIUrl)
       .then(response => response.json())
       .then(results => {
+        errorText.hide();
         displayWeather(results);
       })
       .catch(error => {
         console.error('Error fetching weather data:', error);
-        // change to error page but for now use alert
-        alert('Error fetching weather data. Please try again later.');
+        errorText.show();
+        errorText.text('Error fetching weather data. Please try again later.')
       });
+
+      fetch(forecastAPIUrl)
+      .then(response => response.json())
+      .then(results => {
+        errorText.hide();
+        displayForecast(results);
+      })
+      .catch(error => {
+        console.error('Error fetching weather data:', error);
+        errorText.show();
+        errorText.text('Error fetching weather data. Please try again later.')        
+      });      
   }
 
   function displayWeather(results) {
-    //let weatherInfo = document.getElementById('weatherInfo');
-    //let forecastInfo = document.getElementById('forecast');
 
     if (results.cod === '404') {
       weatherInfo.innerHTML = '<p class="text-danger">The city entered was not found. Please verify city name.</p>';
     } else {
+
+          // clear element
+      currentWeatherEl.empty();
       let cityName = results.city.name;
 
       // Current weather
       let currentWeather = results.list[0];
       let temperature = Math.round(currentWeather.main.temp);
       let weatherDescription = currentWeather.weather[0].description;
-      let weatherId = currentWeather.weather[0].id;
       let currIconImg = currentWeather.weather[0].icon;
-      let iconUrl = 'https://openweathermap.org/img/wn/' + currIconImg + '@2x.png';
+      let humidity = currentWeather.main.humidity;
+      let iconUrl = 'https://openweathermap.org/img/wn/' + currIconImg + '.png';
 
+      // build card
+      let divEl = $('<div>');
+      divEl.addClass('col-md-4 offset-md-3 align-items-center');
 
-      //let cardEl = $('<div class="task-card card mb-2">');
-      //let divEl = $('<div>');
+      let divCardEl = $('<div>');
+      divCardEl.addClass('card col-2');
 
+      let divCardBodyEl = $('<div>');
+      divCardBodyEl.addClass('card-body');
 
+      let cardTitleEl = $('<h5>');
+      cardTitleEl.text(cityName);
 
-      //let curH2El = $('<h2>').text("Current weather conditions");
-      let curH3El = $('<h3 class="mb-3">').text(cityName);
-      let curTempEl = $('<p>').text(temperature + ' °F');
-      let curWeatherDescEl = $('<p>').text(weatherDescription);
+      // weather description
+      let cardDescEl = $('<p>');
+      cardDescEl.addClass('card-text');
+      cardDescEl.text(weatherDescription);
+
+      // temp
+      let cardTempEl = $('<p>');
+      cardTempEl.addClass('card-text');
+      cardTempEl.text(temperature) + " °F";
+
+      // humidity
+      let cardHumidityEl = $('<p>');
+      cardHumidityEl.addClass('card-text');
+      cardHumidityEl.text('Humidity: ' + humidity);
+
+      // weather icon
       let currWeatherIcon = $('<img>');
+      currWeatherIcon.addClass('icon-img');
       currWeatherIcon.attr('src', iconUrl);
 
+      // show current weather header
+      curentWeatherText.show();
+      divCardBodyEl.append(cardTitleEl, currWeatherIcon, cardDescEl, cardTempEl, cardHumidityEl);
 
-    //  currentWeatherEl.html(currentOutput);
-    currentWeatherEl.append(curH3El, curTempEl, curWeatherDescEl, currWeatherIcon);
-
-      // forecast information goes here
+      // append card to page
+      divCardEl.append(divCardBodyEl);
+      currentWeatherEl.append(divCardEl)
 
     }
 }
 
-function getWeatherIcon(weatherId) {
-    // Define mapping of weather condition codes to icon URLs
-    var iconMap = {
-        '01d': 'http://openweathermap.org/img/wn/01d.png', // clear sky (day)
-        '01n': 'http://openweathermap.org/img/wn/01n.png', // clear sky (night)
-        '02d': 'http://openweathermap.org/img/wn/02d.png', // few clouds (day)
-        '02n': 'http://openweathermap.org/img/wn/02n.png', // few clouds (night)
-        // Add more mappings as needed
-    };
+// display the 5 day forecast data
+function displayForecast(data) {
 
-    // Default icon URL if no match found
-    var defaultIconUrl = 'http://openweathermap.org/img/wn/01d.png'; // Default to clear sky (day) icon
+    // clear element
+    forecastWeatherEl.empty();
 
-    // Get icon URL from map, default to defaultIconUrl if no match found
-    return iconMap[weatherCode] || defaultIconUrl;
+    // loop to build cards
+    // not sure why the jquery logic didn't work here....had punt and try another way to build the cards
+    for (let x = 0; x < data.list.length; x += 8) {
+      var item = data.list[x];
+
+      let formattedDate = dayjs(item.dt_txt).format('ddd, MMM D, YYYY');
+
+      // icon 
+      let iconImg = item.weather[0].icon;
+      let iconUrl = 'https://openweathermap.org/img/wn/' + iconImg + '.png';
+
+      // temp
+      let temperature = Math.round(item.main.temp);
+
+      // show 5 day forecast header
+      fiveDayForecastText.show();
+
+      // build and append card to element
+      forecastWeatherEl.append(`
+        <div class="col-md-2">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">${formattedDate}</h5>
+              <img src="${iconUrl}" alt="Weather Icon">
+              <p class="card-text">${item.weather[0].description}</p>
+              <p class="card-text">${temperature} °F</p>
+              <p class="card-text">Humidity: ${item.main.humidity}%</p>
+            </div>
+          </div>
+        </div>
+      `);
+
+    }
+
+
 }
 
-
-//Setting the click function at ID search button
-searchCityFormEl.on("click", function (event) {
+// submit event handler for search button
+searchCityFormEl.on("submit", function (event) {
     // Preventing the button from trying to submit the form
     event.preventDefault();
 
     q = cityInputEl.val();
     if (q === '') {
-        return alert('Please Enter Valid City Name ! ');
+      errorText.show();
+      errorText.text('Please Enter Valid City Name!')      
+        return 
     }
     fetchWeather(q);
-
 //    saveToLocalStorage(q);
 });
 

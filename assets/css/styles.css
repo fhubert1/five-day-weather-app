@@ -1,28 +1,29 @@
 /* Element Selectors */
 
 body {
-    background-color: #f8f9fa;
+    background-color:lavender;
 }
 
+h5 {
+    text-align: center;
+}
 /* Class Selectors */
 
-.weather-card {
-    max-width: 400px;
-    margin: auto;
-    margin-top: 50px;
-    background-color: #fff;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+.card-text, .card {
+    text-align: center; 
 }
 
-.weather-icon {
-    font-size: 2.5rem;
-    margin-right: 10px;
-    border: 2px black solid;
+.icon-img {
+    justify-content: center;
 }
 
-.task-card {
-    margin: 0 auto;
+.current-row-center {
+    justify-content: center;
+
 }
+
+.card, .card-body {
+    background-color: lightpink;
+}
+
   
