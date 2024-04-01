@@ -81,6 +81,7 @@ function fetchWeather(city) {
       let weatherDescription = currentWeather.weather[0].description;
       let currIconImg = currentWeather.weather[0].icon;
       let humidity = currentWeather.main.humidity;
+      let wind = Math.round(currentWeather.wind.speed);
       let iconUrl = 'https://openweathermap.org/img/wn/' + currIconImg + '.png';
 
       // build card
@@ -109,7 +110,12 @@ function fetchWeather(city) {
       // humidity
       let cardHumidityEl = $('<p>');
       cardHumidityEl.addClass('card-text');
-      cardHumidityEl.text('Humidity: ' + humidity);
+      cardHumidityEl.text('Humidity: ' + humidity + '%');
+
+      // humidity
+      let cardWindEl = $('<p>');
+      cardWindEl.addClass('card-text');
+      cardWindEl.text('Wind Speed: ' + wind + 'mph');
 
       // weather icon
       let currWeatherIcon = $('<img>');
@@ -118,7 +124,7 @@ function fetchWeather(city) {
 
       // show current weather header
       curentWeatherText.show();
-      divCardBodyEl.append(cardTitleEl, currWeatherIcon, cardDescEl, cardTempEl, cardHumidityEl);
+      divCardBodyEl.append(cardTitleEl, currWeatherIcon, cardDescEl, cardTempEl, cardHumidityEl, cardWindEl);
 
       // append card to page
       divCardEl.append(divCardBodyEl);
@@ -147,6 +153,9 @@ function displayForecast(data) {
       // temp
       let temperature = Math.round(item.main.temp);
 
+      // wind 
+      let wind = Math.round(item.wind.speed);
+
       // show 5 day forecast header
       fiveDayForecastText.show();
 
@@ -160,6 +169,7 @@ function displayForecast(data) {
               <p class="card-text">${item.weather[0].description}</p>
               <p class="card-text">${temperature} °F</p>
               <p class="card-text">Humidity: ${item.main.humidity}%</p>
+              <p class="card-text">Wind Speed: ${wind} mph</p>
             </div>
           </div>
         </div>
